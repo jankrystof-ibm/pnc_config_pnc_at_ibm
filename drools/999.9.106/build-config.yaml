@@ -1,16 +1,16 @@
 #!productName=Drools
 
-#!productVersion=9.106.0
+#!productVersion=999.9.106
 
 #!droolsProductVersion={{productVersion}}
 #!versionDroolsOverrideProduct=-DversionOverride={{droolsProductVersion}}
 
-#!quarkusVersionCommunity=3.27.4
+#!quarkusVersionCommunity=3.33.3
 #!quarkusVersion={{quarkusVersionCommunity}}.redhat-00002
 
 #!milestone=DR1
 #!stage=GA
-#!scmRevision=9.106.x-prod
+#!scmRevision=999.9.106.x-prod
 
 #!gitServer=github.com
 
@@ -23,7 +23,7 @@
 #!baseMaven={{configureNpmRegistry}}; mvn deploy -B -Dmaven.test.failure.ignore=true -Drevapi.skip=true -Denforcer.skip=true -Dgwt.compiler.localWorkers=1 -Dproductized=true -DskipTests=true -Dfindbugs.skip=true -Dspotbugs.skip=true -Dcheckstyle.skip=true -Dmaven.javadoc.skip=true -Dmaven.artifact.threads=25 -DnpmRegistryURL={{npm_registry}} -DnodeDownloadRoot={{node_download}} -DnpmDownloadRoot={{npm_download}} -DyarnDownloadRoot={{yarn_download}}
 #!baseMavenTree={{baseMaven}} dependency:tree
 
-#!groovyScriptBase=https://gitlab.cee.redhat.com/middleware/build-configurations/raw/master/drools/{{productVersion}}
+#!groovyScriptBase=https://raw.githubusercontent.com/jankrystof-ibm/pnc_config_pnc_at_ibm/main/drools/{{productVersion}}
 
 #!pmeAddProjectSources=-DprojectSrcSkip=false -DenabledDeprecatedProperties=true
 
@@ -42,7 +42,7 @@ defaultBuildParameters:
 builds:
   - name: org.drools-drools-{{droolsProductVersion}}
     project: kiegroup/drools
-    scmUrl: https://{{gitServer}}/kiegroup/drools.git
+    scmUrl: https://{{gitServer}}/jankrystof-ibm/drools_pnc_at_ibm.git
     scmRevision:  {{scmRevision}}
     alignmentParameters:
       - '{{versionDroolsOverrideProduct}}'
