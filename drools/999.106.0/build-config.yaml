@@ -1,0 +1,62 @@
+#!productName=Drools
+
+#!productVersion=999.106.0
+
+#!droolsProductVersion={{productVersion}}
+#!versionDroolsOverrideProduct=-DversionOverride={{droolsProductVersion}}
+
+#!quarkusVersionCommunity=3.33.3
+#!quarkusVersion={{quarkusVersionCommunity}}.redhat-00002
+
+#!milestone=DR1
+#!stage=GA
+#!scmRevision=999.106.x-prod
+
+#!gitServer=github.com
+
+#!baseMaven=mvn deploy -B -Dmaven.test.failure.ignore=true -Drevapi.skip=true -Denforcer.skip=true -Dgwt.compiler.localWorkers=1 -Dproductized=true -DskipTests=true -Dfindbugs.skip=true -Dspotbugs.skip=true -Dcheckstyle.skip=true -Dmaven.javadoc.skip=true -Dmaven.artifact.threads=25
+#!baseMavenTree={{baseMaven}} dependency:tree
+
+#!groovyScriptBase=https://raw.githubusercontent.com/jankrystof-ibm/pnc_config_pnc_at_ibm/main/drools/{{productVersion}}
+
+#!pmeAddProjectSources=-DprojectSrcSkip=false -DenabledDeprecatedProperties=true
+
+product:
+  name: {{productName}}
+  abbreviation: drools
+  stage: {{stage}}
+  issueTrackerUrl: http://issues.jboss.org/browse/DROOLS
+version: {{productVersion}}
+milestone: {{milestone}}
+group: {{productName}}-{{productVersion}}-{{milestone}}-all
+defaultBuildParameters:
+  project: drools
+  environmentId: 1664 # "OpenJDK 17.0; RHEL 9; Mvn 3.9.11"
+  buildScript: {{baseMavenTree}}
+builds:
+  - name: org.drools-drools-{{droolsProductVersion}}
+    project: kiegroup/drools
+    scmUrl: https://{{gitServer}}/kiegroup/drools.git
+    scmRevision:  {{scmRevision}}
+    alignmentParameters:
+      - '{{versionDroolsOverrideProduct}}'
+      - '-DquarkusVersion={{quarkusVersion}}'
+      - '-DgroovyScripts={{groovyScriptBase}}/SetQuarkusVersion.groovy'
+      - '{{pmeAddProjectSources}}'
+
+outputPrefixes:
+  releaseFile: drools
+  releaseDir: drools
+
+flow:
+  licensesGeneration:
+    strategy: IGNORE
+
+  repositoryGeneration:
+    strategy: IGNORE
+
+  javadocGeneration:
+    strategy: IGNORE
+
+  sourcesGeneration:
+    strategy: IGNORE
