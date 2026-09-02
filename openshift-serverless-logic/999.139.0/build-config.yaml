@@ -1,6 +1,6 @@
 #!productName=RHOSS-LOGIC
 
-#!productVersion=999.139
+#!productVersion=999.139.0
 #!milestone=CR1
 #!stage=GA
 
@@ -14,7 +14,7 @@
 
 #!scmRevisionKogito=999.9.106.x-prod
 
-#!imageTagVersion=999.139
+#!imageTagVersion=999.139.0
 #!dataIndexImageRegistry=registry.redhat.io/openshift-serverless-1/logic-data-index-ephemeral-rhel9:{{imageTagVersion}}
 
 #!versionOverrideKogito=-DversionOverride={{kogitoVersion}}
