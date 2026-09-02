@@ -14,13 +14,7 @@
 
 #!gitServer=github.com
 
-#!npm_registry=http://indy-admin.psi.redhat.com/api/folo/track/\$buildContentId/npm/remote/npmjs/
-#!node_download=http://download.devel.redhat.com/rcm-guest/staging/rhba/dist/node/
-#!npm_download=http://download.devel.redhat.com/rcm-guest/staging/rhba/dist/npm/
-#!yarn_download=http://download.devel.redhat.com/rcm-guest/staging/rhba/dist/yarn/
-#!configureNpmRegistry=echo registry={{npm_registry}} > ~/.npmrc; echo fetch-timeout=3600000 >> ~/.npmrc
-
-#!baseMaven={{configureNpmRegistry}}; mvn deploy -B -Dmaven.test.failure.ignore=true -Drevapi.skip=true -Denforcer.skip=true -Dgwt.compiler.localWorkers=1 -Dproductized=true -DskipTests=true -Dfindbugs.skip=true -Dspotbugs.skip=true -Dcheckstyle.skip=true -Dmaven.javadoc.skip=true -Dmaven.artifact.threads=25 -DnpmRegistryURL={{npm_registry}} -DnodeDownloadRoot={{node_download}} -DnpmDownloadRoot={{npm_download}} -DyarnDownloadRoot={{yarn_download}}
+#!baseMaven=mvn deploy -B -Dmaven.test.failure.ignore=true -Drevapi.skip=true -Denforcer.skip=true -Dgwt.compiler.localWorkers=1 -Dproductized=true -DskipTests=true -Dfindbugs.skip=true -Dspotbugs.skip=true -Dcheckstyle.skip=true -Dmaven.javadoc.skip=true -Dmaven.artifact.threads=25
 #!baseMavenTree={{baseMaven}} dependency:tree
 
 #!groovyScriptBase=https://raw.githubusercontent.com/jankrystof-ibm/pnc_config_pnc_at_ibm/main/drools/{{productVersion}}
@@ -42,7 +36,7 @@ defaultBuildParameters:
 builds:
   - name: org.drools-drools-{{droolsProductVersion}}
     project: kiegroup/drools
-    scmUrl: https://{{gitServer}}/jankrystof-ibm/drools_pnc_at_ibm.git
+    scmUrl: https://{{gitServer}}/kiegroup/drools.git
     scmRevision:  {{scmRevision}}
     alignmentParameters:
       - '{{versionDroolsOverrideProduct}}'

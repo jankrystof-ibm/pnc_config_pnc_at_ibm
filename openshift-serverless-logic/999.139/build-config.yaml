@@ -1,0 +1,177 @@
+#!productName=RHOSS-LOGIC
+
+#!productVersion=999.139
+#!milestone=CR1
+#!stage=GA
+
+#!droolsVersion=999.9.106
+#!kogitoVersion=999.9.106
+#!kogitoCommunityVersion=999.9.106
+#!quarkusVersionCommunity=3.33.3
+#!quarkusVersion={{quarkusVersionCommunity}}.redhat-00002
+#!quarkusPlatformVersion={{quarkusVersionCommunity}}.redhat-00001
+#!quarkusBrotli4jVersion=1.23.0.redhat-00001
+
+#!scmRevisionKogito=999.9.106.x-prod
+
+#!imageTagVersion=999.139
+#!dataIndexImageRegistry=registry.redhat.io/openshift-serverless-1/logic-data-index-ephemeral-rhel9:{{imageTagVersion}}
+
+#!versionOverrideKogito=-DversionOverride={{kogitoVersion}}
+#!gitServer=github.com
+
+#!npm_registry=\$(echo \$AProxDependencyUrl | sed \"s;maven/group/\$buildContentId;npm/remote/npmjs/;\")
+#!ca_file=/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
+#!node_download=http://download.devel.redhat.com/rcm-guest/staging/rhba/dist/node/
+#!npm_download=http://download.devel.redhat.com/rcm-guest/staging/rhba/dist/npm/
+#!pnpm_download=http://download.devel.redhat.com/rcm-guest/staging/rhba/dist/pnpm/
+#!cypress_download=http://download.devel.redhat.com/rcm-guest/staging/rhba/dist/npm-libraries/cypress-13.13.0.zip
+#!groovyScriptBase=https://raw.githubusercontent.com/jankrystof-ibm/pnc_config_pnc_at_ibm/main/openshift-serverless-logic/{{productVersion}}
+
+#!baseMaven=mvn deploy -B -Dmaven.test.failure.ignore=true -Drevapi.skip=true -Denforcer.skip=true -Dgwt.compiler.localWorkers=1 -Dproductized=true -DskipTests=true -Dfindbugs.skip=true -Dspotbugs.skip=true -Dcheckstyle.skip=true -Dmaven.javadoc.skip=true -Dmaven.artifact.threads=25
+#!baseMavenTree={{baseMaven}} dependency:tree
+#!baseCypress=export CYPRESS_INSTALL_BINARY={{cypress_download}}
+#!configureNpmRegistry=echo registry={{npm_registry}} > ~/.npmrc; echo cafile={{ca_file}} >> ~/.npmrc; echo fetch-timeout=3600000 >> ~/.npmrc
+#!baseNPMTree={{configureNpmRegistry}}; {{baseMavenTree}} -DnodeDownloadRoot={{node_download}} -DnpmDownloadRoot={{npm_download}} -DpnpmDownloadRoot={{pnpm_download}}
+
+
+#!pmeAddMetas=-DprojectMetaSkip=false
+#!pmeAddProjectSources=-DprojectSrcSkip=false -DenabledDeprecatedProperties=true
+
+product:
+  name: {{productName}}
+  abbreviation: osl
+  stage: {{stage}}
+  issueTrackerUrl: http://issues.jboss.org/browse/KOGITO
+version: {{productVersion}}
+milestone: {{milestone}}
+group: {{productName}}-{{productVersion}}-{{milestone}}-all
+
+defaultBuildParameters:
+  project: osl
+  environmentId: 1664 # "OpenJDK 17.0; RHEL 9; Mvn 3.9.11"
+  buildScript: {{baseMavenTree}}
+builds:
+  - name: org.kie.kogito-kogito-runtimes-{{kogitoVersion}}
+    project: kiegroup/kogito-runtimes
+    scmUrl: https://{{gitServer}}/kiegroup/kogito-runtimes.git
+    scmRevision:  {{scmRevisionKogito}}
+    alignmentParameters:
+      - '{{versionOverrideKogito}}'
+      - '-DdroolsVersion={{droolsVersion}}'
+      - '-DkogitoVersion={{kogitoCommunityVersion}}'
+      - '-DquarkusVersion={{quarkusVersion}}'
+      - '-DquarkusVersionCommunity={{quarkusVersionCommunity}}'
+      - '-DimageRegistry={{dataIndexImageRegistry}}'
+      - '-DdependencyOverride.com.google.protobuf:*@*='
+      - '-DdependencyOverride.io.grpc:*@*='
+      - '-DdependencyOverride.io.quarkus:quarkus-bom@*={{quarkusVersion}}'
+      - '-DdependencyOverride.io.quarkus:quarkus-test-maven@*={{quarkusVersionCommunity}}'
+      - '-DgroovyScripts={{groovyScriptBase}}/FixProtobufPluginConfig.groovy,{{groovyScriptBase}}/SetDroolsVersion.groovy,{{groovyScriptBase}}/SetQuarkusVersion.groovy,{{groovyScriptBase}}/SetQuarkusTestVersionCommunity.groovy,{{groovyScriptBase}}/SetQuarkusPluginVersionCommunity.groovy,{{groovyScriptBase}}/ProcessKogitoBOM.groovy,{{groovyScriptBase}}/ProcessKogitoBOMRefs.groovy,{{groovyScriptBase}}/KogitoBOMExceptionAlignment.groovy,{{groovyScriptBase}}/SetImageRegistry.groovy'
+      - '{{pmeAddMetas}}'
+      - '{{pmeAddProjectSources}}'
+
+  - name: org.kie.kogito-kogito-apps-{{kogitoVersion}}
+    project: kiegroup/kogito-apps
+    scmUrl: https://{{gitServer}}/kiegroup/kogito-apps.git
+    scmRevision:  {{scmRevisionKogito}}
+    buildScript: {{baseMavenTree}} -Dquarkus.build.image=false
+    buildPodMemory: 16
+    alignmentParameters:
+      - '{{versionOverrideKogito}}'
+      - '-DdroolsVersion={{droolsVersion}}'
+      - '-DquarkusVersionCommunity={{quarkusVersionCommunity}}'
+      - '-DdependencyOverride.com.graphql-java:*@*='
+      - '-DgroovyScripts={{groovyScriptBase}}/SetDroolsVersion.groovy,{{groovyScriptBase}}/OverrideKogitoRuntimesVersion.groovy,{{groovyScriptBase}}/OverrideKogitoRuntimesVersionLast.groovy,{{groovyScriptBase}}/SetQuarkusPluginVersionCommunity.groovy'
+      - '{{pmeAddMetas}}'
+      - '{{pmeAddProjectSources}}'
+    dependencies:
+      - org.kie.kogito-kogito-runtimes-{{kogitoVersion}}
+
+  - name: org.kie.kogito-kogito-examples-{{kogitoVersion}}
+    project: kiegroup/kogito-examples
+    scmUrl: https://{{gitServer}}/kiegroup/kogito-examples.git
+    scmRevision:  {{scmRevisionKogito}}
+    buildPodMemory: 16
+    alignmentParameters:
+      - '{{versionOverrideKogito}}'
+      - '-DdroolsVersion={{droolsVersion}}'
+      - '-DquarkusPlatformVersion={{quarkusPlatformVersion}}'
+      - '-DquarkusVersion={{quarkusVersion}}'
+      - '-DkogitoVersion={{kogitoVersion}}'
+      - '-DdependencyOverride.com.google.protobuf:*@*='
+      - '-DdependencyOverride.io.grpc:*@*='
+      - '-DdependencyRelocations.io.quarkus:quarkus-bom@com.redhat.quarkus.platform:quarkus-bom={{quarkusPlatformVersion}}'
+      - '-DpluginRelocations.io.quarkus:quarkus-maven-plugin@com.redhat.quarkus.platform:quarkus-maven-plugin={{quarkusPlatformVersion}}'
+      - '-DgroovyScripts={{groovyScriptBase}}/SetQuarkusPlatformVersion.groovy,{{groovyScriptBase}}/SetQuarkusPluginVersionQuarkus.groovy,{{groovyScriptBase}}/SetDroolsVersion.groovy,{{groovyScriptBase}}/OverrideKogitoRuntimesVersion.groovy,{{groovyScriptBase}}/OverrideKogitoRuntimesVersionLast.groovy,{{groovyScriptBase}}/SetKogitoVersionToRuntimesVersion.groovy,{{groovyScriptBase}}/InjectDroolsDep.groovy,{{groovyScriptBase}}/RemoveDroolsDep.groovy,{{groovyScriptBase}}/SetKogitoBomVersion.groovy,{{groovyScriptBase}}/OverrideKogitoVersionPropertyLast.groovy'
+      - '{{pmeAddMetas}}'
+      - '{{pmeAddProjectSources}}'
+    dependencies:
+      - org.kie.kogito-kogito-apps-{{kogitoVersion}}
+
+  - name: org.kie.kogito-kie-tools-{{kogitoVersion}}
+    project: kubesmarts/kie-tools
+    scmUrl: https://{{gitServer}}/kubesmarts/kie-tools.git
+    scmRevision:  {{scmRevisionKogito}}
+    environmentId: 1664 # "OpenJDK 17.0; RHEL 9; Mvn 3.9.11; Go 1.24; GCC; Make"
+    buildScript: {{baseCypress}}; {{baseNPMTree}}
+    buildPodMemory: 24
+    alignmentParameters:
+      - '{{versionOverrideKogito}}'
+      - '-DquarkusVersionCommunity={{quarkusVersionCommunity}}'
+      - '-DquarkusVersion={{quarkusVersion}}'
+      - '-DquarkusPlatformVersion={{quarkusPlatformVersion}}'
+      - '-DkogitoVersion={{kogitoVersion}}'
+      - '-DdroolsVersion={{droolsVersion}}'
+      - '-DdependencyRelocations.io.quarkus:quarkus-bom@com.redhat.quarkus.platform:quarkus-bom={{quarkusPlatformVersion}}'
+      - '-DgroovyScripts={{groovyScriptBase}}/OverrideKogitoRuntimesVersion.groovy,{{groovyScriptBase}}/OverrideKogitoVersionPropertyLast.groovy,{{groovyScriptBase}}/InlineBOMKieTools.groovy,{{groovyScriptBase}}/SetQuarkusVersion.groovy,{{groovyScriptBase}}/SetPropertiesVersionsKieTools.groovy'
+      - '{{pmeAddMetas}}'
+      - '{{pmeAddProjectSources}}'
+    dependencies:
+      - org.kie.kogito-kogito-examples-{{kogitoVersion}}
+
+  - name: com.redhat.osl-osl-images-{{kogitoVersion}}
+    project: kubesmarts/osl-images
+    scmUrl: https://{{gitServer}}/kubesmarts/osl-images.git
+    scmRevision:  {{scmRevisionKogito}}
+    buildScript: "mvn deploy -f apps-maven-builder/pom.xml"
+    alignmentParameters:
+      - '--file=apps-maven-builder/pom.xml'
+      - '{{versionOverrideKogito}}'
+      - '-DquarkusPlatformGroupId=com.redhat.quarkus.platform'
+      - '-DquarkusPlatformVersion={{quarkusPlatformVersion}}'
+      - '-DquarkusVersion={{quarkusVersion}}'
+      - '-Dbrotli4jVersion={{quarkusBrotli4jVersion}}'
+      - '-DgroovyScripts={{groovyScriptBase}}/OverrideKogitoRuntimesVersion.groovy,{{groovyScriptBase}}/SetPropertiesVersionsOSLImages.groovy'
+    dependencies:
+      - org.kie.kogito-kie-tools-{{kogitoVersion}}
+
+outputPrefixes:
+  releaseFile: openshift-serverless-logic
+  releaseDir: openshift-serverless-logic
+
+flow:
+  # PNC@IBM: vsechny generace docasne IGNORE
+  #  - licensesGeneration: license service neni na PNC@IBM nasazena (skip dle supportu)
+  #  - repositoryGeneration: repo generation na PNC@IBM zatim nefunguje (skip dle supportu)
+  #  - sourcesGeneration: skip (soucast "skip all generations")
+  # Az PNC@IBM generace podpori, vratit repositoryGeneration=BUILD_GROUP (+ excludy,
+  # externalAdditionalConfigs org.drools-drools-{{droolsVersion}}) a sourcesGeneration=GENERATE_ADDITIONAL_SELECTED.
+  licensesGeneration:
+    strategy: IGNORE
+
+  repositoryGeneration:
+    strategy: IGNORE
+
+  javadocGeneration:
+    strategy: IGNORE
+
+  sourcesGeneration:
+    strategy: IGNORE
+
+# addons.extraDeliverablesDownloader docasne vypnuto -- zavisi na repositoryGeneration/deliverables.
+# addons:
+#   extraDeliverablesDownloader:
+#     com.redhat.osl-osl-images-{{kogitoVersion}}:
+#       - matching: 'osl-devmode-maven-repository-.*-image-build\.zip'
+#         suffix: 'osl-devmode-maven-repository-image-build.zip'
