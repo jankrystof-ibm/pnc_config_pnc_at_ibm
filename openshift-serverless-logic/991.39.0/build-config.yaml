@@ -20,7 +20,7 @@
 #!versionOverrideKogito=-DversionOverride={{kogitoVersion}}
 #!gitServer=github.com
 
-#!npm_registry=\$(echo \$AProxDependencyUrl | sed \"s;maven/group/\$buildContentId;npm/remote/npmjs/;\")
+#!npm_registry=https://registry.npmjs.org/
 #!ca_file=/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
 #!node_download=https://nodejs.org/dist/
 #!npm_download=https://registry.npmjs.org/npm/-/
