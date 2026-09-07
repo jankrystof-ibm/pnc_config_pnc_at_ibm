@@ -30,7 +30,7 @@
 
 #!baseMaven=mvn deploy -B -Dmaven.test.failure.ignore=true -Drevapi.skip=true -Denforcer.skip=true -Dgwt.compiler.localWorkers=1 -Dproductized=true -DskipTests=true -Dfindbugs.skip=true -Dspotbugs.skip=true -Dcheckstyle.skip=true -Dmaven.javadoc.skip=true -Dmaven.artifact.threads=25
 #!baseMavenTree={{baseMaven}} dependency:tree
-#!baseCypress=export CYPRESS_INSTALL_BINARY={{cypress_download}}
+#!baseCypress=export CYPRESS_INSTALL_BINARY="{{cypress_download}}"
 #!configureNpmRegistry=echo registry={{npm_registry}} > ~/.npmrc; echo cafile={{ca_file}} >> ~/.npmrc; echo fetch-timeout=3600000 >> ~/.npmrc
 #!baseNPMTree={{configureNpmRegistry}}; {{baseMavenTree}} -DnodeDownloadRoot={{node_download}} -DnpmDownloadRoot={{npm_download}} -DpnpmDownloadRoot={{pnpm_download}}
 
