@@ -22,10 +22,10 @@
 
 #!npm_registry=\$(echo \$AProxDependencyUrl | sed \"s;maven/group/\$buildContentId;npm/remote/npmjs/;\")
 #!ca_file=/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
-#!node_download=http://download.devel.redhat.com/rcm-guest/staging/rhba/dist/node/
-#!npm_download=http://download.devel.redhat.com/rcm-guest/staging/rhba/dist/npm/
-#!pnpm_download=http://download.devel.redhat.com/rcm-guest/staging/rhba/dist/pnpm/
-#!cypress_download=http://download.devel.redhat.com/rcm-guest/staging/rhba/dist/npm-libraries/cypress-13.13.0.zip
+#!node_download=https://nodejs.org/dist/
+#!npm_download=https://registry.npmjs.org/npm/-/
+#!pnpm_download=https://registry.npmjs.org/pnpm/-/
+#!cypress_download=https://download.cypress.io/desktop/13.13.0?platform=linux&arch=x64
 #!groovyScriptBase=https://raw.githubusercontent.com/jankrystof-ibm/pnc_config_pnc_at_ibm/main/openshift-serverless-logic/{{productVersion}}
 
 #!baseMaven=mvn deploy -B -Dmaven.test.failure.ignore=true -Drevapi.skip=true -Denforcer.skip=true -Dgwt.compiler.localWorkers=1 -Dproductized=true -DskipTests=true -Dfindbugs.skip=true -Dspotbugs.skip=true -Dcheckstyle.skip=true -Dmaven.javadoc.skip=true -Dmaven.artifact.threads=25
