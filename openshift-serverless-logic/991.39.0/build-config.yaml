@@ -124,7 +124,7 @@ builds:
       - '-DkogitoVersion={{kogitoVersion}}'
       - '-DdroolsVersion={{droolsVersion}}'
       - '-DdependencyRelocations.io.quarkus:quarkus-bom@com.redhat.quarkus.platform:quarkus-bom={{quarkusPlatformVersion}}'
-      - '-DgroovyScripts={{groovyScriptBase}}/OverrideKogitoRuntimesVersion.groovy,{{groovyScriptBase}}/OverrideKogitoVersionPropertyLast.groovy,{{groovyScriptBase}}/InlineBOMKieTools.groovy,{{groovyScriptBase}}/SetQuarkusVersion.groovy,{{groovyScriptBase}}/SetPropertiesVersionsKieTools.groovy'
+      - '-DgroovyScripts={{groovyScriptBase}}/DecoupleDroolsVersionKieTools.groovy,{{groovyScriptBase}}/OverrideKogitoRuntimesVersion.groovy,{{groovyScriptBase}}/OverrideKogitoVersionPropertyLast.groovy,{{groovyScriptBase}}/InlineBOMKieTools.groovy,{{groovyScriptBase}}/SetQuarkusVersion.groovy,{{groovyScriptBase}}/SetPropertiesVersionsKieTools.groovy'
       - '{{pmeAddMetas}}'
       - '{{pmeAddProjectSources}}'
     dependencies:
