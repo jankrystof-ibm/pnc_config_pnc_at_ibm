@@ -151,12 +151,21 @@ outputPrefixes:
   releaseDir: openshift-serverless-logic
 
 flow:
-  # PNC@IBM: vsechny generace docasne IGNORE
-  #  - licensesGeneration: license service neni na PNC@IBM nasazena (skip dle supportu)
-  #  - repositoryGeneration: repo generation na PNC@IBM zatim nefunguje (skip dle supportu)
-  #  - sourcesGeneration: skip (soucast "skip all generations")
-  # Az PNC@IBM generace podpori, vratit repositoryGeneration=BUILD_GROUP (+ excludy,
-  # externalAdditionalConfigs org.drools-drools-{{droolsVersion}}) a sourcesGeneration=GENERATE_ADDITIONAL_SELECTED.
+  # PNC@IBM: all generations are kept on IGNORE on purpose.
+  # This is the best-effort container-image track (SRVLOGIC-1050): the images consume
+  # individual per-build -image-build.zip artifacts, not any generation output, so no
+  # generation is required here.
+  #  - licensesGeneration: IGNORE - license server is not deployed on PNC@IBM yet (per support).
+  #  - repositoryGeneration: IGNORE - not needed for container images; it produces the product
+  #    offline maven repo deliverable (MRRC content), which the container build does not consume.
+  #    NOTE: repo generation DOES work on PNC@IBM with the bacon snapshot (per Jozef Mrazek,
+  #    2026-09-10); it is skipped by choice, not because it is unavailable.
+  #  - sourcesGeneration: IGNORE - not needed for container images (also works on PNC@IBM).
+  #  - javadocGeneration: IGNORE - not needed.
+  # Full productization (repositoryGeneration=BUILD_GROUP with excludes +
+  # externalAdditionalConfigs org.drools-drools-{{droolsVersion}}, sourcesGeneration=
+  # GENERATE_ADDITIONAL_SELECTED, licensesGeneration once the license server is available)
+  # is deferred to SRVLOGIC-1194 (Finalize PNC@IBM onboarding).
   licensesGeneration:
     strategy: IGNORE
 
@@ -169,7 +178,7 @@ flow:
   sourcesGeneration:
     strategy: IGNORE
 
-# addons.extraDeliverablesDownloader docasne vypnuto -- zavisi na repositoryGeneration/deliverables.
+# addons.extraDeliverablesDownloader disabled -- depends on repositoryGeneration/deliverables (deferred to SRVLOGIC-1194).
 # addons:
 #   extraDeliverablesDownloader:
 #     com.redhat.osl-osl-images-{{kogitoVersion}}:
